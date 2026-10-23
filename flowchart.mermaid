@@ -1,0 +1,29 @@
+graph TD
+    START((START))
+    
+    %% Node 1: The Brain
+    AgentNode["NODE: Agent (The LLM Brain)<br>----------------------------------<br>1. Reads the user question.<br>2. Reads Python tool descriptions.<br>3. Decides: I need to use the API.<br>4. Outputs a JSON tool command."]
+    
+    %% The Router (Conditional Edge)
+    Router{"CONDITIONAL EDGE (Router)<br>-------------------------<br>Did the LLM request<br>to use a tool?"}
+    
+    %% Node 2: The Action
+    ToolNode["NODE: Tool Executor (API Caller)<br>----------------------------------<br>1. Executes Python function.<br>2. HTTP GET /api/work-orders<br>3. Receives JSON from .NET.<br>4. Adds JSON to memory."]
+    
+    %% The Flow Connections
+    START -->|"User: Show me work orders"| AgentNode
+    
+    AgentNode --> Router
+    
+    Router -->|"YES, tool requested"| ToolNode
+    Router -->|"NO, ready to answer"| END((END))
+    
+    ToolNode -->|"Sends JSON back to LLM"| AgentNode
+
+    %% Styling
+    classDef llm fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000;
+    classDef tool fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000;
+    classDef router fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000;
+    class AgentNode llm;
+    class ToolNode tool;
+    class Router router;
